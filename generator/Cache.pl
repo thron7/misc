@@ -16,23 +16,27 @@ mtime(co1, 150).
 mtime(co2, 200).
 mtime(co3, 250).
 
-is_fresh(CacheObject, FileObject):-
+is_fresh(+CacheObject, +FileObject):-
 	mtime(CacheObject, T1),  % get the mtime of CacheObject
 	mtime(FileObject, T2),
 	T2 =< T1.
 
-cache_read(CacheId, CmpFile, CacheObject):-
+cache_read(+CacheId, +CmpFile, -CacheObject):-
 	cache(CacheId, CacheObject),
 	is_fresh(CacheObject, CmpFile).
 
-cache_write(CacheId, Content):-
+cache_write(+CacheId, +Content):-
 	now_timestamp(Now),
-	retract(mtime(Content, _)),
+	mretract(mtime(Content, _)), % i need a retract that's always true
 	assert(mtime(Content, Now)),
-	retract(cache(CacheId, _)),
+	mretract(cache(CacheId, _)),
 	assert(cache(CacheId, Content)).
 
-now_timestamp(TS):-
+mretract(+Term):-
+	retract(Term).
+mretract(_).
+
+now_timestamp(-TS):-
 	get_time(X),
 	TS is floor(X).
 
