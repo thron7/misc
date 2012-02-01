@@ -38,4 +38,8 @@ pretty_print([[Node, Attribs, Children]|N], L) :-
     append([[SOpen], SChildren, [SClose], SN], L).
 
 
+% some AST-related predicates
+
+ast(node_if, [node_if_cond, node_then, node_else]).  % 'if-then-else'
+
 % vim: ts=4 sw=4
